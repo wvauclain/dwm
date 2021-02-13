@@ -1,0 +1,4 @@
+// Ignore everything that is cleaned up by the Makefile
+dwm
+*.o
+dwm-*.tar.gz
