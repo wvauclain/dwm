@@ -25,9 +25,9 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "xxx",     NULL,       NULL,       0,            1,           -1 },
-	/* { "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 }, */
+
+	/* class    instance    title       tags mask     iscentered isfloating   monitor    scratch key */
+	{ NULL,     NULL,   "pulsemixer",   0,            1,         1,           -1,       'p' },
 };
 
 /* layout(s) */
@@ -61,6 +61,9 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
 
+/*First arg only serves to match against key in rules*/
+static const char *pulsemixercmd[] = {"p", "alacritty", "-t", "pulsemixer", "-e", "pulsemixer", NULL};
+
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
@@ -78,6 +81,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                       XK_r,      setlayout,      {.v = &layouts[3]} },
 	{ MODKEY|ShiftMask,             XK_r,      setlayout,      {.v = &layouts[4]} },
+	{ MODKEY,                       XF86XK_AudioMute,  togglescratch,  {.v = pulsemixercmd } },
 	/* { MODKEY,                       XK_space,  setlayout,      {0} }, */
 	{ MODKEY|ShiftMask,             XK_f,      togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
