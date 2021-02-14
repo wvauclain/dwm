@@ -14,6 +14,7 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;     /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
+static const char statussep         = ';';      /* separator between status bars */
 static const char *fonts[]          = { "Iosevka:size=12:style=Medium" };
 #include "gruvbox.h"
 static const char *colors[][3]      = {
@@ -171,4 +172,3 @@ static Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
-
