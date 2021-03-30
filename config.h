@@ -14,8 +14,9 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;     /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char statussep         = ';';      /* separator between status bars */
-static const char *fonts[]          = { "Iosevka:size=12:style=Medium" };
+static const char statusbarsep      = '\x03';      /* separator between status bars */
+static const char statusitemsep     = '\x04';      /* separator between items on bottom status bar */
+static const char *fonts[]          = { "Iosevka Nerd Font:size=12:style=Medium" };
 #include "gruvbox.h"
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
@@ -24,7 +25,7 @@ static const char *colors[][3]      = {
 };
 
 /* tagging */
-static const char *tags[] = { "I", "II", "III", "IV", "V", "VI", "VII", "IIX", "IX" };
+static const char *tags[] = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -32,8 +33,9 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 
-	/* class    instance    title       tags mask     iscentered isfloating   monitor    scratch key */
-	{ NULL,     NULL,   "pulsemixer",   0,            1,         1,           -1,       'p' },
+	/* class       instance    title       tags mask     iscentered isfloating   monitor    scratch key */
+	{ NULL,        NULL,   "pulsemixer",   0,            1,         1,           -1,       'p' },
+	{ "popup-cal", NULL,    NULL,      0,            1,         1,           -1,       'c' },
 };
 
 /* layout(s) */
@@ -95,6 +97,7 @@ static const char *termcmd[]  = { "alacritty", NULL };
 
 /*First arg only serves to match against key in rules*/
 static const char *pulsemixercmd[] = {"p", "alacritty", "-t", "pulsemixer", "-e", "pulsemixer", NULL};
+static const char *calendarcmd[] = {"c", "gnome-calendar", "--class", "popup-cal", NULL};
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -119,6 +122,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[12]} },
 	{ MODKEY,                       XK_o,      setlayout,      {.v = &layouts[13]} },
 	{ MODKEY,                       XF86XK_AudioMute,  togglescratch,  {.v = pulsemixercmd } },
+	{ NULL,                         XF86XK_Favorites,  togglescratch,  {.v = calendarcmd } },
 	/* { MODKEY,                       XK_space,  setlayout,      {0} }, */
 	{ MODKEY|ShiftMask,             XK_f,      togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },

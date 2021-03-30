@@ -868,8 +868,8 @@ drawbar(Monitor *m)
 
 	if ((w = m->ww - tw - stw - x) > bh) {
 		if (m->sel) {
-            /* fix overflow when window name is bigger than window width */
-			int mid = (m->ww - (int)TEXTW(m->sel->name)) / 2 - x;
+			/* fix overflow when window name is bigger than window width */
+			int mid = (m->ww - (int)TEXTW(m->sel->name) + lrpad) / 2 - x;
 			/* make sure name will not overlap on tags even when it is very long */
 			mid = mid >= lrpad / 2 ? mid : lrpad / 2;
 			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
@@ -885,8 +885,37 @@ drawbar(Monitor *m)
 
 
 	if (m == selmon) { /* extra status is only drawn on selected monitor */
+		// For the extra status, we have the ability to split into left, middle, and right
+		char lstext[256] = {0}, mstext[256] = {0}, rstext[256] = {0};
+		int msx;
+
+		// Split the extra status text into left, middle, and right
+		strncpy(lstext, estext, sizeof(lstext) - 1);
+
+		char *e = strchr(lstext, statusitemsep);
+		if (e) {
+			*e = '\0'; e++;
+			strncpy(mstext, e, sizeof(mstext) - 1);
+		} else {
+			mstext[0] = '\0';
+		}
+
+		e = strchr(mstext, statusitemsep);
+		if (e) {
+			*e = '\0'; e++;
+			strncpy(rstext, e, sizeof(rstext) - 1);
+		} else {
+			rstext[0] = '\0';
+		}
+
+		msx = (m->ww - (int)TEXTW(mstext) + lrpad) / 2;
+		tw = TEXTW(rstext);
+
+
 		drw_setscheme(drw, scheme[SchemeNorm]);
-		drw_text(drw, 0, 0, mons->ww, bh, 0, estext, 0);
+		drw_text(drw, 0, 0, mons->ww, bh, lrpad / 2, lstext, 0);
+		drw_text(drw, msx, 0, TEXTW(mstext) - lrpad, bh, 0, mstext, 0);
+		drw_text(drw, m->ww - tw, 0, tw, bh, lrpad / 2, rstext, 0);
 		drw_map(drw, m->extrabarwin, 0, 0, m->ww, bh);
 	}
 }
@@ -2409,7 +2438,7 @@ updatestatus(void)
 		strcpy(stext, "dwm-"VERSION);
 		estext[0] = '\0';
 	} else {
-		char *e = strchr(text, statussep);
+		char *e = strchr(text, statusbarsep);
 		if (e) {
 			*e = '\0'; e++;
 			strncpy(estext, e, sizeof(estext) - 1);
